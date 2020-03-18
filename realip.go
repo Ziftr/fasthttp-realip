@@ -84,6 +84,14 @@ func FromRequest(ctx *fasthttp.RequestCtx) string {
 		return string(xClientIP)
 	}
 
+	xOriginalForwardedFor := ctx.Request.Header.Peek(xOriginalForwardedForHeader)
+	if xOriginalForwardedFor != nil {
+		requestIP, err := retrieveForwardedIP(string(xOriginalForwardedFor))
+		if err == nil {
+			return requestIP
+		}
+	}
+	
 	xForwardedFor := ctx.Request.Header.Peek(xForwardedForHeader)
 	if xForwardedFor != nil {
 		requestIP, err := retrieveForwardedIP(string(xForwardedFor))
